@@ -112,8 +112,16 @@ class PetkitDataUpdateCoordinator(DataUpdateCoordinator):
         """Update data via library."""
         await self._update_smart_polling()
 
+        client = self.config_entry.runtime_data.client
         try:
-            await self.config_entry.runtime_data.client.get_devices_data()
+            try:
+                await client.get_devices_data()
+            except PetkitSessionExpiredError:
+                LOGGER.warning(
+                    "Petkit session expired; attempting one automatic re-login"
+                )
+                await client.login()
+                await client.get_devices_data()
         except (
             PetkitSessionExpiredError,
             PetkitSessionError,
@@ -124,7 +132,7 @@ class PetkitDataUpdateCoordinator(DataUpdateCoordinator):
         except PypetkitError as exception:
             raise UpdateFailed(exception) from exception
         else:
-            data = self.config_entry.runtime_data.client.petkit_entities
+            data = client.petkit_entities
             previous_devices = self.previous_devices
             previous_identifiers = self.previous_device_identifiers
             self.current_devices = set(data)
