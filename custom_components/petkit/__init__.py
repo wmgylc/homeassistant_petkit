@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import time as dt_time, timedelta
+from importlib.util import find_spec
 from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 
@@ -110,12 +111,19 @@ PLATFORMS: list[Platform] = [
     Platform.LIGHT,
     Platform.TEXT,
     Platform.BUTTON,
-    Platform.CAMERA,
     Platform.NUMBER,
     Platform.SELECT,
     Platform.IMAGE,
     Platform.FAN,
 ]
+
+if find_spec("homeassistant.components.web_rtc") is not None:
+    PLATFORMS.insert(6, Platform.CAMERA)
+else:
+    LOGGER.warning(
+        "Petkit camera platform is disabled because this Home Assistant Core "
+        "does not provide web_rtc"
+    )
 
 SERVICE_SET_FEEDING_SCHEDULE = "set_feeding_schedule"
 SERVICE_SKIP_SCHEDULED_FEED = "skip_scheduled_feed"
