@@ -114,14 +114,7 @@ class PetkitDataUpdateCoordinator(DataUpdateCoordinator):
 
         client = self.config_entry.runtime_data.client
         try:
-            try:
-                await client.get_devices_data()
-            except PetkitSessionExpiredError:
-                LOGGER.warning(
-                    "Petkit session expired; attempting one automatic re-login"
-                )
-                await client.login()
-                await client.get_devices_data()
+            await client.async_call_with_session_recovery(client.get_devices_data)
         except (
             PetkitSessionExpiredError,
             PetkitSessionError,

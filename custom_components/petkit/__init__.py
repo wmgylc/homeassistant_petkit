@@ -39,6 +39,7 @@ from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.loader import async_get_loaded_integration
 
+from .client import PetkitApiClient
 from .const import (
     BT_SECTION,
     CONF_BLE_RELAY_ENABLED,
@@ -489,7 +490,7 @@ async def async_setup_entry(
         data_coordinator=coordinator,
     )
     entry.runtime_data = PetkitData(
-        client=PetKitClient(
+        client=PetkitApiClient(
             username=entry.data[CONF_USERNAME],
             password=entry.data[CONF_PASSWORD],
             region=entry.data.get(CONF_REGION, country_from_ha),
