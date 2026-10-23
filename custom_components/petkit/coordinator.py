@@ -114,7 +114,7 @@ class PetkitDataUpdateCoordinator(DataUpdateCoordinator):
 
         client = self.config_entry.runtime_data.client
         try:
-            await client.async_call_with_session_recovery(client.get_devices_data)
+            await client.get_devices_data()
         except (
             PetkitSessionExpiredError,
             PetkitSessionError,
